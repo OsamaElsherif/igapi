@@ -18,25 +18,23 @@ to start the script :
 
 ## *endpoint for the API*
 
-1. https://`server_name`/account/`token`/ or https://`server_name`/account/`token`/me 
-getting your information and there is a `?fields=` parameters you can specify which data you want to retrieve
-2. https://`server_name`/account/`token`/me?username=''
-searching for a public account via username and there is a `?fields=` parameters you can specify which data you want to retrieve
-3. https://`server_name`/account/`token`/stories
-getting the stories for the loged in account and saving it in a `/users/` directory and every user will have a directory with his instagram id
+1. https://`server_name`/account/`token`/ or https://`server_name`/account/`token`/me : 
+- getting your information and there is a `?fields=` parameters you can specify which data you want to retrieve
+2. https://`server_name`/account/`token`/me?username='' : 
+- searching for a public account via username and there is a `?fields=` parameters you can specify which data you want to retrieve
+3. https://`server_name`/account/`token`/stories : 
+- getting the stories for the loged in account and saving it in a `/users/` directory and every user will have a directory with his instagram id
 > */users/`ig_id`* all the directories and files will be created automatically if they are not exist
-4. https://`server_name`/login
-getting the url for the endpoint for logging in and getting the account access
+4. https://`server_name`/login : 
+- getting the url for the endpoint for logging in and getting the account access
 > Logging in proccess has to be on a browsers for a session purpnoses. However, you can get the token as it's returned.
-5. https://`server_name`/search/`username
-searching got the users in the system and get their information
+5. https://`server_name`/search/`username : 
+- searching got the users in the system and get their information
 > the default way is in a json file `users.jsoo`. However, you can save the data in a database and create you own way to search for it, feel free to make the changes in the `API/src/Controllers/SearchController.php`
 
 ---------------------------------------------------------------------------------------------
 
-# THE STORIES CAN'T BE SAVED AS SOON AS THEY PUBLISHED WITHOUT WEEBHOOKS, AND WE USE WEBHOOKS
-# JUST FOR GETTING THE FULL INSIGHTS AFTER THE STORY DISAPPERS, SO THERE IS AN OPTION CALLED
-# HOURLU UPDATE WHICH WILL UPDATE THE STORY GETTING EVERY HOUR.
+## THE STORIES CAN'T BE SAVED AS SOON AS THEY PUBLISHED WITHOUT WEEBHOOKS, SO THERE IS AN OPTION CALLED HOURLU UPDATE WHICH WILL UPDATE THE STORY GETTING EVERY HOUR.
 
 for the houly update you need to call the stories function hourly for every user, so you
 have to put on your mind that this needs you to save the account instance to get to this data
