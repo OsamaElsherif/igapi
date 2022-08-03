@@ -10,8 +10,8 @@ $igapi = new IGAPI();
 // IGAPI to work, all the following information are needed, fill it with
 // yout own data
 $defines = array(
-    'app_id' => '840833846835596',
-    'app_secret' => '6538f61449e1923535f1ddebc23b8a1a',
+    'app_id' => '',
+    'app_secret' => '',
     'default_graph_version' => 'v3.2',
     'presistent_data_handler' => 'session',
     'facebook_redirect_uri' => "https://".$_SERVER['SERVER_NAME']."/igapi/main.php",
