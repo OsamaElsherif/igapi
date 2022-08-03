@@ -16,13 +16,16 @@ class Account {
     private string $endpoint_base;
     private string $token;
 
-    public function __construct() {
-        $this->get_session();
+    public function __construct(string $token, string $endpoint_base) {
+        // $this->get_session();
+        $this->token = $token;
+        $this->endpoint_base = $endpoint_base;
+
         $this->id = $this->get_id();
         $this->ig_id = $this->get_ig_id();
 
-        if ( !file_exists( "users/".$this->ig_id ) ) {
-            mkdir( "users/".$this->ig_id , 0777, true);
+        if ( !file_exists( "../users/".$this->ig_id ) ) {
+            mkdir( "../users/".$this->ig_id , 0777, true );
         }
     }
 
@@ -36,7 +39,7 @@ class Account {
         $APICall = new APICall($endpoint, $params);
         $response = $APICall->make_call();
 
-        return $response['business_discovery'];
+        return $response;
     }
 
     public function information(string $fileds) :array {
@@ -68,7 +71,7 @@ class Account {
             $story = new Story($this->endpoint_base, $this->token, $story['id']);
             $story = $story->get_story();
             $this->stories[$response['data'][$key]['id']] = $story;
-            $report = $story->save("users/$this->ig_id");
+            $report = $story->save("../users/$this->ig_id");
             $feedback[$key] = array(
                 'feedback' => array (
                     'stroy' => $story,

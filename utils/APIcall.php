@@ -7,22 +7,22 @@
 
 abstract class Basic_APICall {
     public string $endpoint;
-    private array $params;
+    private ?array $params;
     public function __construct(){}
-    public function make_call() :array {}
+    public function make_call() :?array {}
     private function create_url() :string {}
     public function get_params() :array {}
 }
 
 class APICall extends Basic_APICall {
-    public function __construct(string $endpoint, array $params) {
+    public function __construct(string $endpoint, ?array $params) {
         $this->endpoint = $endpoint;
         $this->params = $params;
     }
 
-    public function make_call() :array {
-        $url = $this->create_url($this->endpoint, $this->params);
-        
+    public function make_call() :?array {
+        $url = ($this->params) ? $this->create_url($this->endpoint, $this->params) : $this->endpoint;
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -35,6 +35,7 @@ class APICall extends Basic_APICall {
             unset( $response['data'][0]['access_token'] );
         }
 
+
         return $response;
     }
 
@@ -46,7 +47,8 @@ class APICall extends Basic_APICall {
         return $endpoint .= '?'.http_build_query($params);
     }
 }
-class DownloadAPICall extends APICall {
+
+class DownloadAPICall {
     public string $path;
 
     public function __construct($path) {

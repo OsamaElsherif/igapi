@@ -14,7 +14,7 @@ $defines = array(
     'app_secret' => '6538f61449e1923535f1ddebc23b8a1a',
     'default_graph_version' => 'v3.2',
     'presistent_data_handler' => 'session',
-    'facebook_redirect_uri' => 'http://localhost:8000/main.php',
+    'facebook_redirect_uri' => "https://".$_SERVER['SERVER_NAME']."/igapi/main.php",
     'endpoint_base' => 'https://graph.facebook.com/v14.0/'
 );
 

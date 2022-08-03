@@ -60,7 +60,7 @@ class IGAPI {
             $accessToken = $helper->getAccessToken();
             $this->token = new Token($accessToken, $oAuth2Client, $longLived);
         } catch ( Facebook\Exceptions\FacebookResponseException $e ) {
-            echo "Graph API returned an error ". $e->getMessage;
+            echo "Graph API returned an error ". $e;
         } catch ( Facebook\Exceptions\FacebookSDKException $e ) {
             echo "Facebook SDK returned an error ". $e;
         }
