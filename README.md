@@ -1,43 +1,36 @@
-### this is the script for getting the instagram stories and save it
+## this is the script for getting the instagram stories and save it
+### Documintaion
 
-## TO DO LIST
+download this folder, and make changes in the `get_information.php`
+you have to clone the `php-garph-sdk` from the main repo to this project folder
+```
+git clone https://github.com/facebookarchive/php-graph-sdk.git
+```
+you have to use the API endpoints to make integrations with other programming langyages
 
-1. clean the code [X]
-2. create the needed oobjects [X]
-3. make the project folder structure [X]
-
-
-## Documintaion
-
-Just you have to include the full php project to your project,
-and create a json file called "defines.json", and copy the next
-structure to it with you own app data.
-
-# REMEMBER THAT THE SCRIPT WILL CREATE DIRS & FILES FOR ALL THE USERS WHI WOLL USE
-# YOUR APPLICATION, WHUCH NEANS THAT YOU NEED TO GET THEIR ACCEPTACE FOR GETTING THEIR
-# DATA
+> # *** REMEMBER THAT THE SCRIPT WILL CREATE DIRS & FILES FOR ALL THE USERS WHO WILL USE YOUR APPLICATION, WHICH NEANS THAT YOU NEED TO GET THEIR PERMESSION FOR GETTING THEIR DATA ***
 
 to start the script :
 
-1. create a file that will intilize the whole script like main.php
-2. make the file save the data in a session named data, and redirect the page to the start file for you project.
-3. start the session and include the manager class from the utils folder
-4. intialize the account class and feel free to do what you want
+1. create a file that will intilize the whole script like `main.php` and `get_information.php`
+2. save the token in a session and use it in the API endpoints, then redirect the page to the intialized file for your project.
+3. use the IGAPI main classes to make you requests or use the API
 
-to get the account information : 
+## *endpoint for the API*
 
-1. gust call the information method form the account instance
-2. to get more information, just add the fields that you want to get, see the Meta Developers Docs to get more information about it
-
-to search for someone: 
-        !! The username account must be connected to facebook page !!
-
-1. call the search method and write the username, and the fields you want to get 
-2. to get more information, just add the fields that you want to get, see the Meta Developers Docs to get more information about it
-
-to get the stories information : 
-
-1. just call the stories method, and it will do all the things for you
+1. https://`server_name`/account/`token`/ or https://`server_name`/account/`token`/me 
+getting your information and there is a `?fields=` parameters you can specify which data you want to retrieve
+2. https://`server_name`/account/`token`/me?username=''
+searching for a public account via username and there is a `?fields=` parameters you can specify which data you want to retrieve
+3. https://`server_name`/account/`token`/stories
+getting the stories for the loged in account and saving it in a `/users/` directory and every user will have a directory with his instagram id
+> */users/`ig_id`* all the directories and files will be created automatically if they are not exist
+4. https://`server_name`/login
+getting the url for the endpoint for logging in and getting the account access
+> Logging in proccess has to be on a browsers for a session purpnoses. However, you can get the token as it's returned.
+5. https://`server_name`/search/`username
+searching got the users in the system and get their information
+> the default way is in a json file `users.jsoo`. However, you can save the data in a database and create you own way to search for it, feel free to make the changes in the `API/src/Controllers/SearchController.php`
 
 ---------------------------------------------------------------------------------------------
 
