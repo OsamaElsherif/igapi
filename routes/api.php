@@ -130,6 +130,10 @@ Route::get('/connect/ig', function() {
             $APICall = new APICall($url, $params);
             $response = $APICall->make_call();            
             $user_db->update(['ig_user_id' => $ig_id, 'username' => $response['username']]);
+
+            if ( !file_exists(__DIR__."\users\\".$ig_id ) ) {
+                mkdir( __DIR__."\users\\".$ig_id , 0777, true );
+            }
             
             return $response;
         }
@@ -213,7 +217,7 @@ Route::get('/stories', function(Request $request) {
                         $story_id = $response['data'][$key]['id'];
                         $reach = 0;
                         $impressions = 0;
-                        
+
                         if (!isset($insights['error'])) {
                             foreach ($insights['data'] as $key => $value) {
                                 if ($insights['data'][$key]['name'] == 'reach') {
