@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// use App\Models\User;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +26,13 @@ Route::get('login', function() {
     return view('login');
 });
 
+// logout
+Route::get('logout', function() {
+    $_SESSION['user'] = '';
+    session_unset();
+    return redirect('login');
+});
+
 // register for the project
 Route::get('register', function() {
     return view('register');
@@ -34,20 +41,26 @@ Route::get('register', function() {
 // ---- these depends on the acces token in the database ----
 
 // going to the account
-Route::get('me/{username}', function($username) {
-    return view('account', ['username' => $username]);
+Route::get('me/', function() {
+    if (isset($_SESSION['user'])) {
+        $email = $_SESSION['user']['email'];
+        $name = User::where('email', $email)->get(['name'])[0]['name'];
+        return view('account', ['username' => $name]);
+    } else {
+        return redirect('login');
+    }
 });
 
 // getting the stories
-Route::get('me/stories', function() {
-    return view('stories');
+Route::get('stories', function() {
+    return view('stories', ['username' => 'current']);
 });
 
 // ---- these depends on the username in the database ----
 
 // searching for the users
 Route::get('user/{username}', function($username) {
-    return view('account', ['username' => $username]);
+    return view('user', ['username' => $username]);
 });
 
 

@@ -18,31 +18,173 @@
             body {
                 font-family: 'Nunito', sans-serif;
             }
+            .fbLoginButton {
+                width: fit-content;
+                height: fit-content;
+                padding: 10px 20px;
+                color: #fff;
+                background: cornflowerblue;
+                border: 0px solid;
+                border-radius: 10px;
+                font-size: 20px;
+                text-align: center;
+                cursor: pointer;
+            }
+            #row {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            #cv {
+                width: 30%;
+                border: 1px solid #2e2e2e;
+                border-radius: 50px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+            .ig_btn {
+                color: #fff;
+                padding: 10px;
+                border: 0px solid;
+                border-radius: 10px;
+                background: #d6249f;
+                background: radial-gradient(circle at 30% 107%, #fdf497 0%, #cdc463 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
+                cursor: pointer;
+            }
         </style>
     </head>
     <body class="antialiased">
-        <!-- Facebook JSSDK init -->
-        <script>
-            window.fbAsyncInit = function() {
-                FB.init({
-                appId            : '6028314047185242',
-                autoLogAppEvents : true,
-                xfbml            : true,
-                version          : 'v14.0'
-                });
-            };
-        </script>
         <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
         <!-- Body of the application -->
         <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0"
             style = "flex-direction:column;">
             <h1> {{ $username }}</h1>
             <hr>
+            <!-- user data -->
+            <div id='cv'></div>
             <!-- facebook login button -->
-            <div class="fb-login-button" data-width="150" data-size="large" data-button-type="continue_with" data-layout="rounded" data-auto-logout-link="true" data-use-continue-as="true"></div>
+            <div class="fbLoginButton" id="Btn"></div>
         </div>
-        <!-- for facebook loggin -->
-        <div id="fb-root"></div>
-        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0&appId=840833846835596&autoLogAppEvents=1" nonce="5o7am0iP"></script>
+        <!-- Facebook JSSDK init -->
+        <script>
+            var Btn = document.getElementById('Btn');
+            
+            window.fbAsyncInit = function() {    
+                FB.init({
+                    appId            : '6028314047185242',
+                    autoLogAppEvents : true,
+                    xfbml            : true,
+                    version          : 'v14.0'
+                });
+                
+                FB.getLoginStatus(function(response) {
+                    statusChangeCallback(response);
+                });
+
+                login = () => {
+                    FB.login(function(response) {
+                        console.log("Logged in successfully");
+                        makePostRequest(response);
+                        statusChangeCallback(response);
+                    }, {scope :'public_profile,instagram_basic,pages_show_list,instagram_manage_insights,pages_read_engagement'});
+                };
+                
+                logout = () => {
+                    FB.logout(function(response) {
+                        console.log(response);
+                        statusChangeCallback(response);
+                    });
+                };
+                
+            };
+
+            Btn.addEventListener('click', () => {
+                if (Btn.innerHTML === 'Login') {
+                    login();
+                } else {
+                    logout();
+                    location.href = 'https://localhost/igapi/public/logout';
+                }
+            });
+
+            function create_get_request(url, func) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.overrideMimeType("application/json");
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        data = JSON.parse(xhttp.responseText);
+                        func(data);
+                    }
+                };
+                xhttp.open("GET", url, true);
+                xhttp.send();
+            }
+
+            let cv = document.getElementById('cv');
+            var IgBtn;
+            if (cv !== null) {
+                data = create_get_request("/igapi/public/api/information", (data) => {
+                    for (key in data[0]) {
+                        div = document.createElement('div');
+                        div.id = 'row';
+                        p = document.createElement('p')
+                        p.innerHTML = key
+                        div.appendChild(p);
+                        p = document.createElement('p')
+                        if (key === 'ig_user_id' && data[0][key] === null) {
+                            p.innerHTML = "<div class='ig_btn' onclick='connect_ig();' id='ig_btn'>connect instagram</div>";
+                        } else {
+                            p.innerHTML = data[0][key];
+                        }
+                        div.appendChild(p);
+                        cv.appendChild(div);
+                    }
+                });
+            };
+
+            function connect_ig() {
+                data = create_get_request('/igapi/public/api/connect/ig', (data) => {
+                    location.href = '/igapi/public/api/connect/ig';
+                });
+            }
+
+            function makePostRequest(response) {
+                Result = response.authResponse;
+                data = {
+                    'access_token': Result.accessToken,
+                    'signed_request': Result.signedRequest,
+                    'experies_in': Result.expiresIn,
+                    'data_access_expiration_time': Result.data_access_expiration_time,
+                    'facebook_user_id': Result.userID,
+                };
+                createForm('hidden_form', '/igapi/public/api/connect', 'POST', data);
+                document.getElementById('hidden_form').submit();
+            }
+            
+            function createForm(id, action, method, data) {
+                const form = document.createElement('form');
+                form.action = action;
+                form.method = method;
+                form.id = id;
+                Object.entries(data).forEach(entry => {
+                    const [key, value] = entry;
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden';
+                    inp.name = key;
+                    inp.value = value;
+                    form.appendChild(inp);
+                });
+                document.body.appendChild(form);
+            }
+            
+            function statusChangeCallback(response) {
+                console.log(" ---- statucChangeCallback ---- ");
+                if (response.status === "connected") {
+                    Btn.innerHTML = "Logout";
+                } else {
+                    Btn.innerHTML = "Login";
+                }
+            };
+        </script>
     </body>
 </html>

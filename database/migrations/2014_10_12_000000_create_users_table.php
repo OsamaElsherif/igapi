@@ -18,6 +18,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('username')->nullable();
+            $table->string('access_token')->nullable();
+            $table->string('signed_request')->nullable();
+            $table->string('experies_in')->nullable();
+            $table->string('data_access_expiration_time')->nullable();
+            $table->string('facebook_user_id')->nullable();
+            $table->String('ig_user_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->timestamps();

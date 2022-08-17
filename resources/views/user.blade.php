@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Stories </title>
+        <title>Login </title>
 
         <!-- Fonts -->
         <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -18,84 +18,39 @@
             body {
                 font-family: 'Nunito', sans-serif;
             }
-            .stories {
+            #row {
                 display: flex;
                 flex-direction: row;
-                width: fit-content;
-                height: fit-content;
+                justify-content: space-between;
             }
-            div#story {
-                width: 250px;
-                padding: 10px;
-                border: 1px solid dodgerblue;
-                background: dodgerblue;
-                border-radius: 5px;
-                margin: 10px;
+            #cv {
+                width: 30%;
+                border: 1px solid #2e2e2e;
+                border-radius: 50px;
+                padding: 20px;
+                margin-bottom: 30px;
             }
-            img {
-                width: -webkit-fill-available;
-            }
-            div#err {
-                padding-left: 30px;
-                padding-right: 30px;
-                color: #a1a9af;
+            #body {
+                width: 100%;
+                display: flex;
+                justify-content: center;
             }
         </style>
     </head>
     <body class="antialiased">
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+        <!-- Body of the application -->
         <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0"
             style = "flex-direction:column;">
-            <h1> View Stories Page</h1>
-            <h3>New Stories</h3>
-            <div id='new_stories' class='stories'>
-
-            </div>
+            <h1> {{ $username }}</h1>
             <hr>
-            <h3>All Stories</h3>
-            <div id='all_stories' class='stories'>
-
-            </div>
-            <hr>
+            <!-- user data -->
+            <div id="body"></div>
+            <!-- facebook login button -->
+            <div class="fbLoginButton" id="Btn"></div>
         </div>
+        <!-- Facebook JSSDK init -->
         <script>
-            let newStories = document.getElementById('new_stories');
-            let allStories = document.getElementById('all_stories');
-
-            window.onload = () => {
-
-                url = '/igapi/public/api/stories?username={{$username}}&stories=all';
-                create_get_request(url, (data) => {
-                    Object.entries(data).forEach(entry => {
-                        const [key, value] = entry;
-                        feedback = value.feedback;
-                        getAllStories('story', feedback);
-                    });
-                });
-
-                url = '/igapi/public/api/stories?username={{$username}}&stories=new';
-                create_get_request(url, (data) => {
-                    if (data['error']) {
-                        const err = document.createElement('div');
-                        err.id = 'err';
-                        const errMsg = document.createElement('h1');
-                        errMsg.id = 'errMsg';
-                        errMsg.innerHTML = 'There is no new stories here :3 ';
-                        err.appendChild(errMsg);
-
-                        newStories.appendChild(err);
-                    } else {
-                        Object.entries(data).forEach(entry => {
-                            const [key, value] = entry;
-                            feedback = value.feedback;
-                            story = feedback.story;
-                            insights = feedback.insights;
-                            report = feedback.report;
-                            createStories('story', story);
-                        });
-                    }
-                });
-            };
-            
             function create_get_request(url, func) {
                 var xhttp = new XMLHttpRequest();
                 xhttp.overrideMimeType("application/json");
@@ -109,58 +64,32 @@
                 xhttp.send();
             }
 
-            function createStories(id, data) {
-                const story = document.createElement('div');
-                story.id = id;
-
-                if(data.media_type == 'IMAGE') {
-                    const story_img = document.createElement('img');
-                    story_img.src = data.media_url;
-                    story.appendChild(story_img);
-                }
-
-                if (data.media_type == "VIDEO") {
-                    const story_video = document.createElement('video');
-                    story_video.poster = data.thumbnail_url;
-                    story_video.controls = true;
-
-                    const source = document.createElement('source');
-                    source.src = data.media_url;
-                    story_video.appendChild(source);
-                    
-                    story.appendChild(story_video);
-                }
-                
-                newStories.appendChild(story);
-            };
             
-            function getAllStories(id, feedback) {
-                data = feedback.story;
-                path = feedback.report.path;
-                
-                const story = document.createElement('div');
-                story.id = id;
-                
-                if(data.media_type == 'IMAGE') {
-                    const story_img = document.createElement('img');
-                    story_img.src = "https://localhost/igapi/routes/users/"+path+".jpg";
-                    story.appendChild(story_img);
+            let body = document.getElementById('body');
+            data = create_get_request("/igapi/public/api/information?username={{ $username }}", (data) => {
+                if (data.Error) {
+                    alert(data.Error);
+                } else {
+                    cv = document.createElement('div');
+                    cv.id = "cv";
+                    for (key in data[0]) {
+                        div = document.createElement('div');
+                        div.id = 'row';
+                        p = document.createElement('p')
+                        p.innerHTML = key
+                        div.appendChild(p);
+                        p = document.createElement('p')
+                        if (key === 'ig_user_id' && data[0][key] === null) {
+                            p.innerHTML = "NaN";
+                        } else {
+                            p.innerHTML = data[0][key];
+                        }
+                        div.appendChild(p);
+                        cv.appendChild(div);
+                    }
+                    body.appendChild(cv);
                 }
-                
-                if (data.media_type == "VIDEO") {
-                    const story_video = document.createElement('video');
-                    story_video.poster = data.thumbnail_url;
-                    story_video.controls = true;
-                    
-                    const source = document.createElement('source');
-                    source.src = "https://localhost/igapi/routes/users/"+path+".mp4";
-                    story_video.appendChild(source);
-
-                    story.appendChild(story_video);
-                }
-
-                allStories.appendChild(story);
-            };
+            });
         </script>
     </body>
 </html>
